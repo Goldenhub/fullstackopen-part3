@@ -47,11 +47,11 @@ app.get('/info', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     let id = Number(request.params.id);
     let person = persons.find(e => e.id === id);
-    if (person.name) {
+    if (person) {
         response.send(person)
     } else {
         response.statusMessage = "Resource Not Found";
-        response.status('404').json({status: 404, message: 'Resource Not Found'})
+        response.status(404).json({status: 404, message: 'Resource Not Found'})
     }
 })
 
