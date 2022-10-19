@@ -2,10 +2,10 @@
   "name": "fullstackopen-part3",
   "version": "1.0.0",
   "description": "backend implementation of the fullstackopen course",
-  "main": "phonebook_backend_step5.js",
+  "main": "phonebook_backend_step7.js",
   "scripts": {
-    "start": "node phonebook_backend_step5.js",
-    "dev": "nodemon phonebook_backend_step5.js",
+    "start": "node phonebook_backend_step7.js",
+    "dev": "nodemon phonebook_backend_step7.js",
     "test": "echo \"No test suite\" && Exit 1"
   },
   "repository": {
@@ -25,6 +25,7 @@
     "nodemon": "^2.0.20"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "morgan": "^1.10.0"
   }
 }
