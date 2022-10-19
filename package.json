@@ -17,7 +17,9 @@
     "expressjs",
     "commonJS",
     "route",
-    "nodemon"
+    "nodemon",
+    "morgan",
+    "middleware"
   ],
   "author": "Golden",
   "license": "MIT",
