@@ -3,19 +3,10 @@ const morgan = require('morgan');
 const app = express();
 app.use(express.json());
 morgan.token('test', (req, res) => {
-    return JSON.stringify(req.body)
+    return req.method === 'POST' ? JSON.stringify(req.body) : ''
 })
 app.use(morgan(':method :status :res[content-length] - :response-time ms :test'))
 
-// const requestLogger = (request, response, next) => {
-//     console.log('Method', request.method)
-//     console.log('Path', request.path)
-//     console.log('Body', request.body)
-//     console.log('----------------')
-//     next()
-// }
-
-// app.use(requestLogger);
 
 let persons = [
     { 
