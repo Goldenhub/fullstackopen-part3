@@ -20,7 +20,7 @@ function App() {
       .then(phonebook => {
         setPersons(phonebook);
       })
-  }, [persons]);
+  }, []);
 
   const [filter, setFilter] = useState("");
 
