@@ -2,6 +2,18 @@
 
 ## Backend implementation using nodejs
 
+### [Render Link - frontend](https://phonebook-7auv.onrender.com/)
+
+### [Render Link - api](https://phonebook-7auv.onrender.com/api/persons)
+
+To fetch a record use the {id} as a params e.g <https://phonebook-7auv.onrender.com/api/persons/{id}>
+
+### HTTP Requests
+- GET - <https://phonebook-7auv.onrender.com/api/persons>
+- GET - <https://phonebook-7auv.onrender.com/api/persons/{id}>
+- POST - <https://phonebook-7auv.onrender.com/api/persons> along side the data in the body
+- DELETE - <https://phonebook-7auv.onrender.com/api/persons/{id}>
+
 ### outline
 
 - [x] 3.1: Phonebook backend step1

@@ -19,7 +19,11 @@
     "route",
     "nodemon",
     "morgan",
-    "middleware"
+    "middleware",
+    "render",
+    "yaml",
+    "toml",
+    "fly.io"
   ],
   "author": "Golden",
   "license": "MIT",
