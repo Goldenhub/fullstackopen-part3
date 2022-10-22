@@ -31,13 +31,18 @@ mongoose.connect(url)
         return entry.save();
     })
     .then(result => {
+        if (process.argv.length === 3 && result.length === 0) {
+            console.log('Phonebook is empty');
+            return mongoose.connection.close();
+        }
         if (process.argv.length === 3) {
             console.log('phonebook:');
             result.forEach(entry => {
                 console.log(`${entry.name} ${entry.number}`);
             })
+        } else {
+            console.log(`added ${result.name} number ${result.number} to phonebook`)
         }
-        console.log(`added ${result.name} number ${result.number} to phonebook`)
         return mongoose.connection.close();
     })
     .catch(err => {
