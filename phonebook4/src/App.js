@@ -74,12 +74,7 @@ function App() {
           axiosServices
             .updateContact(requiredContact.id, replacementContact)
             .then(response => {
-              setPersons(persons.map(person => {
-                if (Number(person.id) === Number(response.data.id)) {
-                  return response.data;
-                }
-                return person
-              }));
+              setPersons(response.data);
               setNewUser((prev) => ({
                 ...prev,
                 name: "",

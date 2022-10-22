@@ -113,9 +113,23 @@ app.post('/api/persons', (request, response) => {
 
 app.put('/api/persons/:id', (request, response) => {
     let body = request.body;
-    response.status(200).json({status: 200, message: "Person Updated", data: body})
-    // let person = persons.find(contact => contact.name === newUser.name.trim());
-    // let data = {...requiredContact, "number": newUser.number}
+    let id = Number(request.params.id);
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: id
+    }
+    if (!body.number) {
+        response.statusMessage = "Content Missing";
+        return response.status(400).json({ status: 400, message: "Number must be present" })
+    }
+    persons = persons.map(e => {
+        if (Number(e.id) === id) {
+            return person;
+        }
+        return e;
+    })
+    response.status(200).json({status: 200, message: "Person Updated", data: persons})
 })
 
 // Catching unknown endpoints
