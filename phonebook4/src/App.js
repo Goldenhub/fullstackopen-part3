@@ -103,7 +103,8 @@ function App() {
       axiosServices
         .deletePerson(target.id)
         .then(response => {
-          setSuccessMessage(`Deleted successfully`)
+          setPersons(persons.filter(e => Number(e.id) !== Number(target.id)));
+          setSuccessMessage(response.message)
           setTimeout(() => {
               setSuccessMessage('')
           }, 5000)
