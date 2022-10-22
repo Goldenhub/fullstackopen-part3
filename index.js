@@ -8,6 +8,7 @@ morgan.token('test', (req, res) => {
 })
 app.use(morgan(':method :status :res[content-length] - :response-time ms :test'))
 app.use(cors())
+app.use(express.static('build'))
 
 
 let persons = [
