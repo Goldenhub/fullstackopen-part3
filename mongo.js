@@ -18,7 +18,7 @@ const PhoneBookSchema = new mongoose.Schema({
 const Phonebook = mongoose.model('phonebook', PhoneBookSchema);
 
 
-mongoose.connect
+mongoose.connect(url)
     .then(e => {
         console.log('connected')
         if (process.argv.length === 3) {
