@@ -107,8 +107,15 @@ app.post('/api/persons', (request, response) => {
         id: id
     }
     persons = persons.concat(person);
-    response.status(200).json({status: 200, message: "Person Added", data: person})
+    response.status(200).json({status: 200, message: "New person Added", data: person})
 
+})
+
+app.put('/api/persons/:id', (request, response) => {
+    let body = request.body;
+    response.status(200).json({status: 200, message: "Person Updated", data: body})
+    // let person = persons.find(contact => contact.name === newUser.name.trim());
+    // let data = {...requiredContact, "number": newUser.number}
 })
 
 // Catching unknown endpoints

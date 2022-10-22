@@ -74,6 +74,17 @@ function App() {
           axiosServices
             .updateContact(requiredContact.id, replacementContact)
             .then(response => {
+              setPersons(persons.map(person => {
+                if (Number(person.id) === Number(response.data.id)) {
+                  return response.data;
+                }
+                return person
+              }));
+              setNewUser((prev) => ({
+                ...prev,
+                name: "",
+                number: "",
+              }));
               setSuccessMessage(`Updated ${newUser.name}`);
               setTimeout(() => {
                 setSuccessMessage('')
