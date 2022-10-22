@@ -13,6 +13,7 @@ To fetch a record use the {id} as a params e.g <https://phonebook-7auv.onrender.
 - GET - <https://phonebook-7auv.onrender.com/api/persons>
 - GET - <https://phonebook-7auv.onrender.com/api/persons/{id}>
 - POST - <https://phonebook-7auv.onrender.com/api/persons> along side the data in the body
+- PUT - <https://phonebook-7auv.onrender.com/api/persons/{id}> along side the data in the body
 - DELETE - <https://phonebook-7auv.onrender.com/api/persons/{id}>
 
 ### outline
