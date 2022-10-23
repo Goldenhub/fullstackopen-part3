@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     axiosServices.getPersons()
       .then(phonebook => {
-        setPersons(phonebook);
+        setPersons(phonebook.data);
       })
   }, []);
 

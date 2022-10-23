@@ -1,8 +1,10 @@
 const express = require('express');
+require('dotenv').config()
 const cors = require('cors');
 const morgan = require('morgan');
 const app = express();
 app.use(express.json());
+const Phonebook = require('./models/phonebook.js')
 morgan.token('test', (req, res) => {
     return req.method === 'POST' ? JSON.stringify(req.body) : ''
 })
@@ -11,29 +13,6 @@ app.use(cors())
 app.use(express.static('build'))
 
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
 // Homepage
 app.get('/', (request, response) => {
     response.send('<h1>Welcome to the Persons DataBase</h1>');
@@ -41,8 +20,9 @@ app.get('/', (request, response) => {
 
 // Get all Persons
 app.get('/api/persons', (request, response) => {
-
-  response.send(persons)
+    Phonebook.find({}).then(entries => {
+        response.json({status: 200, message: "successful", data: entries})
+    })
 })
 
 // Get Info
@@ -92,22 +72,14 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({status: 400, message: "Number must be present"})
     }
 
-    let duplicateName = persons.find(e => e.name === body.name.trim());
-
-    if (duplicateName) {
-        response.statusMessage = "Duplicate Post";
-        return response.status(400).json({status: 400, message: "Name must be unique"})
-    }
-
-
-    let id = Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
-    const person = {
+    const entry = new Phonebook({
         name: body.name,
-        number: body.number,
-        id: id
-    }
-    persons = persons.concat(person);
-    response.status(200).json({status: 200, message: "New person Added", data: person})
+        number: body.number
+    })
+
+    entry.save().then(savedEntry => {
+        response.status(200).json({status: 200, message: "New entry added", data: savedEntry})
+    })
 
 })
 
