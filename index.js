@@ -71,7 +71,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
                 response.status(404).end()
             }
         })
-    .catch(err => next(err))
+        .catch(err => next(err))
 })
 
 // Post a Person
@@ -127,9 +127,9 @@ app.use(unknownEndpoint)
 
 // error handling
 const errorHandler = (error, request, response, next) => {
-    console.log(err.message);
+    console.log(error.message);
 
-    if (err.name === 'CastError') {
+    if (error.name === 'CastError') {
         response.status(400).send({ status: 400, error: 'malformatted ID' })
     }
 
