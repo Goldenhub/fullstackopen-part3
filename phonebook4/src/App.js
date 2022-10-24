@@ -74,7 +74,7 @@ function App() {
           axiosServices
             .updateContact(requiredContact.id, replacementContact)
             .then(response => {
-              setPersons(response.data);
+              setPersons(persons.map(person => person.id === response.data.id ? response.data : person));
               setNewUser((prev) => ({
                 ...prev,
                 name: "",
@@ -104,12 +104,12 @@ function App() {
     }));
   }
 
-  function handleDelete({target}) {
+  function handleDelete({ target }) {
     if (window.confirm("Do you really want to delete this person")){
       axiosServices
         .deletePerson(target.id)
         .then(response => {
-          setPersons(persons.filter(e => Number(e.id) !== Number(target.id)));
+          setPersons(persons.filter(e => e.id !== target.id));
           setSuccessMessage(response.message)
           setTimeout(() => {
               setSuccessMessage('')
