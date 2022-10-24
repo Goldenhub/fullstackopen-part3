@@ -39,61 +39,80 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    let stringedPersons = JSON.stringify(persons);
-    let checkName = stringedPersons.includes(
-      JSON.stringify(newUser.name.trim())
-    );
-    let checkNumber = stringedPersons.includes(
-      JSON.stringify(newUser.number.trim())
-    );
-    if (!checkName && !checkNumber) {
+    
+    let name = newUser.name.trim()
+    let number = newUser.number.trim()
+    
+    let duplicate = persons.find(e => {
+      return e.name === name && e.number === number
+    })
+    let checkName = persons.find(e => {
+      return e.name === name;
+    })
+    let checkNumber = persons.find(e => {
+      return e.number === number
+    })
+    console.log(duplicate, checkName, checkNumber)
+
+    if (duplicate) {
+      setErrorMessage(`${name} details is already added to phonebook`)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, 5000)
+    } else if(checkName) {
+      if (window.confirm(`${name} is already added to phonebook, replace the Old number with a new one?`)) {
+        let requiredContact = persons.find(contact => contact.name === name);
+        let replacementContact = { ...requiredContact, "number": number }
+        axiosServices
+          .updateContact(requiredContact.id, replacementContact)
+          .then(response => {
+            setPersons(persons.map(person => person.id === response.data.id ? response.data : person));
+            setNewUser((prev) => ({
+              ...prev,
+              name: "",
+              number: "",
+            }));
+            setSuccessMessage(`Updated ${name}`);
+            setTimeout(() => {
+              setSuccessMessage('')
+            }, 5000)
+          })
+          .catch(e => {
+            setErrorMessage(`Information of ${name} has already been removed from server`);
+            setTimeout(() => {
+              setErrorMessage('')
+            }, 5000)
+          })
+      }
+    } else if (checkNumber) {
+        setErrorMessage(`${number} is already added to phonebook`)
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 5000)
+    }  else {
       axiosServices
       .postPerson(newUser)
-      .then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewUser((prev) => ({
-          ...prev,
-          name: "",
-          number: "",
-        }));
-        setSuccessMessage(`Added ${newUser.name}`);
-        setTimeout(() => {
-          setSuccessMessage('')
-        }, 5000)
+        .then((response) => {
+          setNewUser((prev) => ({
+            ...prev,
+            name: "",
+            number: "",
+          }));
+          if (response.status === 200) {
+            setPersons(persons.concat(response.data));
+            setSuccessMessage(`Added ${newUser.name}`);
+            setTimeout(() => {
+              setSuccessMessage('')
+            }, 5000)
+          } else {
+            setErrorMessage(response.error)
+            setTimeout(() => {
+              setErrorMessage('')
+            }, 5000)
+          }
       });
-      
-    } else {
-      if (checkName && checkNumber) {
-        alert(`${newUser.name.trim()} details is already added to phonebook`);
-      } else if (checkNumber) {
-        alert(`${newUser.number.trim()} is already added to phonebook`);
-      } else {
-        if (window.confirm(`${newUser.name.trim()} is already added to phonebook, replace the Old number with a new one?`)){
-          let requiredContact = persons.find(contact => contact.name === newUser.name.trim());
-          let replacementContact = {...requiredContact, "number": newUser.number}
-          axiosServices
-            .updateContact(requiredContact.id, replacementContact)
-            .then(response => {
-              setPersons(persons.map(person => person.id === response.data.id ? response.data : person));
-              setNewUser((prev) => ({
-                ...prev,
-                name: "",
-                number: "",
-              }));
-              setSuccessMessage(`Updated ${newUser.name}`);
-              setTimeout(() => {
-                setSuccessMessage('')
-              }, 5000)
-            })
-            .catch(e => {
-              setErrorMessage(`Information of ${newUser.name} has already been removed from server`);
-              setTimeout(() => {
-                setErrorMessage('')
-              }, 5000)
-            })
-        }
-      }
     }
+    
   };
 
   function handleChange({ target }) {
@@ -110,7 +129,7 @@ function App() {
         .deletePerson(target.id)
         .then(response => {
           setPersons(persons.filter(e => e.id !== target.id));
-          setSuccessMessage(response.message)
+          setSuccessMessage('Record deleted successfully')
           setTimeout(() => {
               setSuccessMessage('')
           }, 5000)
@@ -121,7 +140,7 @@ function App() {
     <div>
       <h2>Phonebook</h2>
       {successMessage && <Notification message={successMessage} type="success" />}
-      {errorMessage && <Notification message={errorMessage} type="success" />}
+      {errorMessage && <Notification message={errorMessage} type="error" />}
       <Filter filter={filter} handleFilter={handleFilter} />
 
       <h2>Add New</h2>

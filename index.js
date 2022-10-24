@@ -75,45 +75,33 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 // Post a Person
-app.post('/api/persons', (request, response) => {
-    let body = request.body;
-
-    if (!body.name && !body.number) {
-        response.statusMessage = "Content Missing";
-        return response.status(400).json({status: 400, message: "Name and Number must be present"})
-    } else if (!body.name) {
-        response.statusMessage = "Content Missing";
-        return response.status(400).json({status: 400, message: "Name must be present"})
-    } else if (!body.number) {
-        response.statusMessage = "Content Missing";
-        return response.status(400).json({status: 400, message: "Number must be present"})
-    }
+app.post('/api/persons', (request, response, next) => {
+    let {name, number} = request.body;
 
     const entry = new Phonebook({
-        name: body.name,
-        number: body.number
+        name: name,
+        number: number
     })
 
-    entry.save().then(savedEntry => {
-        response.status(200).json({status: 200, message: "New entry added", data: savedEntry})
-    })
+    entry.save()
+        .then(savedEntry => {
+            response.json({status: 200, message: "New entry added", data: savedEntry})
+        })
+        .catch(err => next(err))
 
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-    let body = request.body;
+    let {name, number} = request.body;
     let id = request.params.id;
     const person = {
-        name: body.name,
-        number: body.number,
+        name: name,
+        number: number,
     }
-    if (!body.number) {
-        response.statusMessage = "Content Missing";
-        return response.status(400).json({ status: 400, message: "Number must be present" })
-    }
-    Phonebook.findByIdAndUpdate(id, person, { new: true })
+    
+    Phonebook.findByIdAndUpdate(id, person, { new: true, runValidators: true, context: 'query' })
         .then(updatedRecord => {
-            response.status(200).json({status: 200, message: "Record updated", data: updatedRecord})
+            response.json({status: 200, message: "Record updated", data: updatedRecord})
         })
         .catch(err => next(err))
 })
@@ -130,7 +118,9 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.message);
 
     if (error.name === 'CastError') {
-        response.status(400).send({ status: 400, error: 'malformatted ID' })
+        response.status(400).json({ status: 400, error: 'malformatted ID' })
+    }else if(error.name === 'ValidationError') {
+        response.json({ status: 400, error: error.message })
     }
 
     next(error);
