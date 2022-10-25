@@ -20,7 +20,12 @@ const phonebookSchema = new mongoose.Schema({
     },
     number: {
         type: String,
-        required: true
+        minLength: 8,
+        required: true,
+        validate: {
+            validator: (value) => /(\d{2,})-(\d{6,})|(\d{3,})-(\d{5,})/.test(value),
+            message: props => `${props.value} is not a valid number`
+        }
     }
 })
 

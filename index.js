@@ -5,7 +5,6 @@ const morgan = require('morgan');
 const app = express();
 app.use(express.json());
 const Phonebook = require('./models/phonebook.js');
-const phonebook = require('./models/phonebook.js');
 morgan.token('test', (req, res) => {
     return req.method === 'POST' ? JSON.stringify(req.body) : ''
 })
@@ -60,9 +59,9 @@ app.delete('/api/persons/:id', (request, response, next) => {
     let id = request.params.id;
 
     Phonebook.findByIdAndRemove(id)
-        .then(deletedNote => {
-            console.log(deletedNote);
-            if (deletedNote) {
+        .then(deletedRecord => {
+            console.log(deletedRecord);
+            if (deletedRecord) {
                 response.statusMessage = 'Entry deleted'
                 response.status(202).end();
             }
@@ -83,11 +82,28 @@ app.post('/api/persons', (request, response, next) => {
         number: number
     })
 
-    entry.save()
-        .then(savedEntry => {
-            response.json({status: 200, message: "New entry added", data: savedEntry})
+    let duplicate = undefined;
+
+    Phonebook.findOne({ name: name })
+        .then(value => {
+            if (value) {
+                duplicate = true;
+            }
+            return duplicate;
         })
-        .catch(err => next(err))
+        .then(status => {
+            if (!status) {
+                entry.save()
+                    .then(savedEntry => {
+                        response.json({status: 200, message: "New entry added", data: savedEntry})
+                    })
+                    .catch(err => next(err))
+            } else {
+                response.json({status: 409, message: "Name already exist"})
+            }
+        })
+        
+
 
 })
 
@@ -118,7 +134,7 @@ const errorHandler = (error, request, response, next) => {
     console.log(error.message);
 
     if (error.name === 'CastError') {
-        response.status(400).json({ status: 400, error: 'malformatted ID' })
+        response.json({ status: 400, error: 'malformatted ID' })
     }else if(error.name === 'ValidationError') {
         response.json({ status: 400, error: error.message })
     }

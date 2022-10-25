@@ -43,54 +43,7 @@ function App() {
     let name = newUser.name.trim()
     let number = newUser.number.trim()
     
-    let duplicate = persons.find(e => {
-      return e.name === name && e.number === number
-    })
-    let checkName = persons.find(e => {
-      return e.name === name;
-    })
-    let checkNumber = persons.find(e => {
-      return e.number === number
-    })
-    console.log(duplicate, checkName, checkNumber)
-
-    if (duplicate) {
-      setErrorMessage(`${name} details is already added to phonebook`)
-      setTimeout(() => {
-        setErrorMessage('')
-      }, 5000)
-    } else if(checkName) {
-      if (window.confirm(`${name} is already added to phonebook, replace the Old number with a new one?`)) {
-        let requiredContact = persons.find(contact => contact.name === name);
-        let replacementContact = { ...requiredContact, "number": number }
-        axiosServices
-          .updateContact(requiredContact.id, replacementContact)
-          .then(response => {
-            setPersons(persons.map(person => person.id === response.data.id ? response.data : person));
-            setNewUser((prev) => ({
-              ...prev,
-              name: "",
-              number: "",
-            }));
-            setSuccessMessage(`Updated ${name}`);
-            setTimeout(() => {
-              setSuccessMessage('')
-            }, 5000)
-          })
-          .catch(e => {
-            setErrorMessage(`Information of ${name} has already been removed from server`);
-            setTimeout(() => {
-              setErrorMessage('')
-            }, 5000)
-          })
-      }
-    } else if (checkNumber) {
-        setErrorMessage(`${number} is already added to phonebook`)
-        setTimeout(() => {
-          setErrorMessage('')
-        }, 5000)
-    }  else {
-      axiosServices
+    axiosServices
       .postPerson(newUser)
         .then((response) => {
           setNewUser((prev) => ({
@@ -98,22 +51,66 @@ function App() {
             name: "",
             number: "",
           }));
-          if (response.status === 200) {
-            setPersons(persons.concat(response.data));
-            setSuccessMessage(`Added ${newUser.name}`);
-            setTimeout(() => {
-              setSuccessMessage('')
-            }, 5000)
-          } else {
-            setErrorMessage(response.error)
-            setTimeout(() => {
-              setErrorMessage('')
-            }, 5000)
+          switch (response.status) {
+            
+            case 200:
+              setPersons(persons.concat(response.data));
+              setSuccessMessage(`Added ${name}`);
+              setTimeout(() => {
+                setSuccessMessage('')
+              }, 5000)
+              break;
+            case 400:
+              setErrorMessage(response.error)
+              setTimeout(() => {
+                setErrorMessage('')
+              }, 5000)
+              break;
+            case 409:
+              setErrorMessage(response.message)
+              setTimeout(() => {
+                if (window.confirm(`${name} is already added to phonebook, replace the Old number with a new one?`)) {
+                  let requiredContact = persons.find(contact => contact.name === name);
+                  let replacementContact = { ...requiredContact, "number": number }
+                  axiosServices
+                    .updateContact(requiredContact.id, replacementContact)
+                    .then(response => {
+                      if (response.status === 200) {
+                        setPersons(persons.map(person => person.id === response.data.id ? response.data : person));
+                        setSuccessMessage(`Updated ${name}`);
+                        setTimeout(() => {
+                          setSuccessMessage('')
+                        }, 5000)
+                      } else {
+                        setErrorMessage(response.error);
+                        setTimeout(() => {
+                          setErrorMessage('')
+                        }, 5000)
+                      }
+                      setNewUser((prev) => ({
+                        ...prev,
+                        name: "",
+                        number: "",
+                      }));
+                    })
+                    .catch(err => {
+                      setErrorMessage(err.error);
+                      setTimeout(() => {
+                        setErrorMessage('')
+                      }, 5000)
+                    })
+                }
+                setErrorMessage('')
+              }, 1000)
+              break;
+            default:
+              setErrorMessage(response.error || response.message)
+              setTimeout(() => {
+                setErrorMessage('')
+              }, 5000)
           }
-      });
-    }
-    
-  };
+        });
+  }
 
   function handleChange({ target }) {
     const { name, value } = target;
