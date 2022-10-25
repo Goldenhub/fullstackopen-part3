@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "echo \"No test suite\" && Exit 1"
+    "test": "echo \"No test suite\" && Exit 1",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -41,6 +42,7 @@
   "author": "Golden",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^8.26.0",
     "nodemon": "^2.0.20"
   },
   "dependencies": {
