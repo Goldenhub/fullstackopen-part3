@@ -2,9 +2,9 @@
 
 ## Backend implementation using nodejs
 
-### [Render Link - frontend](https://phonebook-7auv.onrender.com/)
+### [Link - frontend](https://phonebook-7auv.onrender.com/)
 
-### [Render Link - api](https://phonebook-7auv.onrender.com/api/persons)
+### [Link - backend](https://phonebook-7auv.onrender.com/api/persons)
 
 To fetch a record use the {id} as a params e.g <https://phonebook-7auv.onrender.com/api/persons/{id}>
 
